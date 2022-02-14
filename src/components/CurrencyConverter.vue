@@ -10,18 +10,7 @@
             :dataCurrency="firstActiveCurrency"
             @change-currency="changeFirstCurrency"
         />
-        <v-text-field
-            v-model="firstInput"
-            class="ma-3 pa-0 my-input"
-            :error-messages="amountFirstErrors"
-            label="Введите количество"
-            required
-            filled
-            solo
-            @input="$v.firstInput.$touch()"
-            @blur="$v.firstInput.$touch()"
-            @keyup="secondInputCalc()"
-        ></v-text-field>
+        <MyInput @keyup-calc-data="secondInputCalc" :valInput="firstInput"/>
       </v-row>
       <v-row class="ma-0 pa-0 justify-center">
         <MySelect
@@ -31,36 +20,24 @@
             :dataCurrency="secondActiveCurrency"
             @change-currency="changeSecondCurrency"
         />
-        <v-text-field
-            v-model="secondInput"
-            class="ma-3 pa-0 my-input"
-            :error-messages="amountSecondErrors"
-            label="Введите количество"
-            required
-            filled
-            solo
-            @input="$v.secondInput.$touch()"
-            @blur="$v.secondInput.$touch()"
-            @keyup="firstInputCalc()"
-        ></v-text-field>
+        <MyInput @keyup-calc-data="firstInputCalc" :valInput="secondInput"/>
       </v-row>
     </v-col>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import MySelect from '@/components/MySelect'
 import CurrentRate from '@/components/CurrentRate'
-import { validationMixin } from 'vuelidate'
-import { decimal, minValue } from 'vuelidate/lib/validators'
+import MyInput from '@/components/MyInput'
 
 export default {
   name: "CurrencyConverter",
-  mixins: [validationMixin],
   components: {
     MySelect,
-    CurrentRate
+    CurrentRate,
+    MyInput
   },
 
   data() {
@@ -72,29 +49,8 @@ export default {
     };
   },
 
-  validations: {
-    firstInput: { decimal, minValue: minValue(0) },
-    secondInput: { decimal, minValue: minValue(0) }
-  },
-
   computed: {
     ...mapGetters(["VALUTES"]),
-
-    amountFirstErrors () {
-      const errors = []
-      if (!this.$v.firstInput.$dirty) return errors
-      !this.$v.firstInput.decimal && errors.push('Введите число')
-      !this.$v.firstInput.minValue && errors.push('Введите положительное число')
-      return errors
-    },
-
-    amountSecondErrors () {
-      const errors = []
-      if (!this.$v.secondInput.$dirty) return errors
-      !this.$v.secondInput.decimal && errors.push('Введите число')
-      !this.$v.secondInput.minValue && errors.push('Введите положительное число')
-      return errors
-    },
 
     currentRate() {
       if (this.firstActiveCurrency && this.secondActiveCurrency) {
@@ -143,11 +99,12 @@ export default {
       localStorage.setItem('secondActiveCurrency', this.secondActiveCurrency)
     },
 
-    firstInputCalc() {
-      if (Number(this.secondInput) > 0 && (typeof Number(this.secondInput)) === 'number') {
+    firstInputCalc(valInput) {
+      this.secondInput = valInput
+      if (Number(valInput) > 0 && (typeof Number(valInput)) === 'number') {
         this.firstInput = parseFloat(
             (
-                (Number(this.secondInput) * this.VALUTES[this.firstActiveCurrency]) /
+                (Number(valInput) * this.VALUTES[this.firstActiveCurrency]) /
                 this.VALUTES[this.secondActiveCurrency]
             ).toFixed(2)
         )
@@ -155,11 +112,12 @@ export default {
       }
     },
 
-    secondInputCalc() {
-      if (Number(this.firstInput) > 0 && (typeof Number(this.firstInput)) === 'number') {
+    secondInputCalc(valInput) {
+      this.firstInput = valInput
+      if (Number(valInput) > 0 && (typeof Number(valInput)) === 'number') {
         this.secondInput = parseFloat(
             (
-                (Number(this.firstInput) * this.VALUTES[this.secondActiveCurrency]) /
+                (Number(valInput) * this.VALUTES[this.secondActiveCurrency]) /
                 this.VALUTES[this.firstActiveCurrency]
             ).toFixed(2)
         )
