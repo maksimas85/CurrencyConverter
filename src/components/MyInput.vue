@@ -20,12 +20,7 @@ import { decimal, minValue } from 'vuelidate/lib/validators'
 export default {
   name: "MyInput",
   mixins: [validationMixin],
-  props: {
-    valInput: {
-      type: Number,
-      required: false
-    }
-  },
+  props: ['valInput'],
 
   data() {
     return {
