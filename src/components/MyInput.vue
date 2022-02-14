@@ -1,15 +1,15 @@
 <template>
   <v-text-field
-      v-model="dataInput"
+      v-model.number="dataInput"
       class="ma-3 pa-0 my-input"
-      :error-messages="amountFirstErrors"
+      :error-messages="amountErrors"
       label="Введите количество"
       required
       filled
       solo
       @input="$v.dataInput.$touch()"
       @blur="$v.dataInput.$touch()"
-      @keyup="secondInputCalc"
+      @keyup="InputCalc"
   ></v-text-field>
 </template>
 
@@ -22,7 +22,7 @@ export default {
   mixins: [validationMixin],
   props: {
     valInput: {
-      type: Number || String,
+      type: Number,
       required: false
     }
   },
@@ -38,7 +38,7 @@ export default {
   },
 
   computed: {
-    amountFirstErrors () {
+    amountErrors () {
       const errors = []
       if (!this.$v.dataInput.$dirty) return errors
       !this.$v.dataInput.decimal && errors.push('Введите число')
@@ -57,7 +57,7 @@ export default {
   },
 
   methods: {
-    secondInputCalc() {
+    InputCalc() {
       this.$emit('keyup-calc-data', this.amount)
     }
   }

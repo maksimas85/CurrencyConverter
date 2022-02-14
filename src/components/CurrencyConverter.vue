@@ -5,7 +5,6 @@
       <v-row class="ma-0 pa-0 justify-center">
         <MySelect
             v-if="firstActiveCurrency"
-            class="ma-3 my-select"
             :valutes="VALUTES"
             :dataCurrency="firstActiveCurrency"
             @change-currency="changeFirstCurrency"
@@ -15,7 +14,6 @@
       <v-row class="ma-0 pa-0 justify-center">
         <MySelect
             v-if="secondActiveCurrency"
-            class="ma-3 my-select"
             :valutes="VALUTES"
             :dataCurrency="secondActiveCurrency"
             @change-currency="changeSecondCurrency"
@@ -65,12 +63,12 @@ export default {
 
   watch: {
     firstInput() {
-      if (Number(this.firstInput) === 0 || Number(this.firstInput) == null) {
+      if (!this.firstInput) {
         this.secondInput = null
       }
     },
     secondInput() {
-      if (Number(this.secondInput) === 0 || Number(this.secondInput) == null) {
+      if (!this.secondInput) {
         this.firstInput = null
       }
     }
@@ -101,10 +99,10 @@ export default {
 
     firstInputCalc(valInput) {
       this.secondInput = valInput
-      if (Number(valInput) > 0 && (typeof Number(valInput)) === 'number') {
+      if (valInput > 0) {
         this.firstInput = parseFloat(
             (
-                (Number(valInput) * this.VALUTES[this.firstActiveCurrency]) /
+                (valInput * this.VALUTES[this.firstActiveCurrency]) /
                 this.VALUTES[this.secondActiveCurrency]
             ).toFixed(2)
         )
@@ -114,10 +112,10 @@ export default {
 
     secondInputCalc(valInput) {
       this.firstInput = valInput
-      if (Number(valInput) > 0 && (typeof Number(valInput)) === 'number') {
+      if (valInput > 0) {
         this.secondInput = parseFloat(
             (
-                (Number(valInput) * this.VALUTES[this.secondActiveCurrency]) /
+                (valInput * this.VALUTES[this.secondActiveCurrency]) /
                 this.VALUTES[this.firstActiveCurrency]
             ).toFixed(2)
         )

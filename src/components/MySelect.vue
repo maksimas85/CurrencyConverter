@@ -2,6 +2,7 @@
   <v-autocomplete
     v-model="value"
     :items="items"
+    class="ma-3 my-select"
     hide-details
     filled
     solo
